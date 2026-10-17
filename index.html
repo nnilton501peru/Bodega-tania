@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102b4e">
+<title>Mi Bodega — Tu tienda de confianza</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#" data-view="store"><span class="brand-icon">▦</span><span><b>Mi Bodega</b><small>Tu tienda de confianza</small></span></a>
+  <div class="top-actions">
+    <button class="icon-btn" id="searchToggle" aria-label="Buscar">⌕</button>
+    <button class="icon-btn cart-top" id="openCart" aria-label="Ver carrito">🛒 <span id="cartBadge">0</span></button>
+    <button class="menu-btn" id="menuToggle" aria-label="Abrir menú">☰</button>
+  </div>
+</header>
+
+<div class="search-wrap hidden" id="searchWrap"><input id="searchInput" placeholder="Buscar arroz, leche, gaseosa..." aria-label="Buscar productos"></div>
+<nav class="nav-tabs" id="mainNav">
+  <button class="nav-tab active" data-view="store">🏠 <span>Inicio</span></button>
+  <button class="nav-tab" data-view="categories">▦ <span>Categorías</span></button>
+  <button class="nav-tab" data-view="history">◷ <span>Mis compras</span></button>
+  <button class="nav-tab" data-view="account">♙ <span>Mi cuenta</span></button>
+</nav>
+
+<main>
+  <section id="storeView" class="view">
+    <div class="hero">
+      <div><span class="eyebrow">CERCA DE TI</span><h1>Lo que necesitas,<br>sin complicaciones.</h1><p>Haz tu pedido fácil desde tu celular.</p></div>
+      <div class="hero-art" aria-hidden="true">🛍️🥤🥫</div>
+    </div>
+    <div class="category-row" id="categoryRow"></div>
+    <div class="section-heading"><div><h2>Productos</h2><p>Elige tus favoritos y agrégalos al carrito.</p></div><span class="muted" id="productCount"></span></div>
+    <div class="product-grid" id="productGrid"></div>
+  </section>
+
+  <section id="categoriesView" class="view hidden">
+    <div class="page-heading"><h1>Categorías</h1><p>Encuentra rápidamente lo que buscas.</p></div>
+    <div class="category-list" id="categoryList"></div>
+  </section>
+
+  <section id="historyView" class="view hidden">
+    <div class="page-heading"><h1>Mis compras</h1><p>Consulta pedidos realizados desde este navegador.</p></div>
+    <div class="notice">En esta versión de prueba, el historial se guarda en este dispositivo. El historial personal sincronizado entre dispositivos requiere una cuenta y una base de datos segura.</div>
+    <div class="summary-grid">
+      <div class="summary-card"><span>Pedidos guardados</span><strong id="customerOrderCount">0</strong></div>
+      <div class="summary-card"><span>Total registrado</span><strong id="customerSpend">S/ 0.00</strong></div>
+    </div>
+    <div class="toolbar"><select id="historyFilter" aria-label="Filtrar historial"><option value="all">Todos los pedidos</option><option value="month">Este mes</option></select></div>
+    <div id="customerHistory" class="stack"></div>
+  </section>
+
+  <section id="accountView" class="view hidden">
+    <div class="page-heading"><h1>Mi cuenta</h1><p>Datos para preparar tu pedido.</p></div>
+    <div class="panel form-panel">
+      <label>Tu nombre<input id="customerName" placeholder="Ej. Juan Pérez"></label>
+      <label>Tu teléfono (opcional)<input id="customerPhone" inputmode="tel" placeholder="Tu número de contacto"></label>
+      <label>Dirección o referencia (opcional)<textarea id="customerAddress" rows="3" placeholder="Ej. Calle, número, referencia..."></textarea></label>
+      <button class="btn primary full" id="saveCustomer">Guardar datos en este dispositivo</button>
+      <p class="muted small">No ingreses contraseñas ni datos bancarios aquí.</p>
+    </div>
+    <div class="panel">
+      <h2>Administración de la bodega</h2>
+      <p class="muted">El panel de demostración permite practicar productos, pedidos, ventas y gastos en este dispositivo.</p>
+      <button class="btn dark full" id="openAdmin">Abrir panel de administración</button>
+    </div>
+  </section>
+
+  <section id="adminView" class="view hidden">
+    <div class="page-heading"><h1>Panel de administración</h1><p>Herramientas de prueba para tu bodega.</p></div>
+    <div class="notice warning"><b>Prototipo:</b> los datos se guardan solo en este navegador. No uses datos reales sensibles. Para que clientes y administrador compartan datos con seguridad, habrá que conectar una base de datos y autenticación antes de usarlo como negocio real.</div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-admin="dashboard">Resumen</button>
+      <button class="admin-tab" data-admin="products">Productos</button>
+      <button class="admin-tab" data-admin="orders">Pedidos</button>
+      <button class="admin-tab" data-admin="expenses">Gastos</button>
+      <button class="admin-tab" data-admin="sales">Ventas</button>
+    </div>
+    <div id="adminDashboard" class="admin-pane">
+      <div class="summary-grid">
+        <div class="summary-card"><span>Pedidos</span><strong id="adminOrderCount">0</strong></div>
+        <div class="summary-card"><span>Ventas confirmadas</span><strong id="adminSalesTotal">S/ 0.00</strong></div>
+        <div class="summary-card"><span>Gastos registrados</span><strong id="adminExpensesTotal">S/ 0.00</strong></div>
+        <div class="summary-card"><span>Ganancia estimada*</span><strong id="adminProfit">S/ 0.00</strong></div>
+      </div>
+      <div class="panel"><h2>Ventas recientes</h2><div id="salesChart" class="mini-chart"></div><p class="muted small">*Estimación simple basada en ventas confirmadas menos costo de productos vendidos y gastos registrados.</p></div>
+      <div class="panel"><h2>Atajos</h2><div class="shortcut-grid"><button class="btn primary" data-jump="products">＋ Agregar producto</button><button class="btn soft" data-jump="orders">Ver pedidos</button><button class="btn soft" data-jump="expenses">Registrar gasto</button></div></div>
+    </div>
+    <div id="adminProducts" class="admin-pane hidden">
+      <div class="section-heading"><h2>Productos</h2><button class="btn primary" id="addProduct">＋ Nuevo</button></div>
+      <form id="productForm" class="panel form-grid hidden">
+        <h2 id="productFormTitle">Nuevo producto</h2>
+        <input type="hidden" id="productId">
+        <label>Nombre<input id="productName" required placeholder="Nombre del producto"></label>
+        <div class="two-col"><label>Precio de venta (S/)<input id="productPrice" type="number" min="0" step="0.01" required></label><label>Costo de compra (S/)<input id="productCost" type="number" min="0" step="0.01" value="0"></label></div>
+        <div class="two-col"><label>Stock actual<input id="productStock" type="number" min="0" step="1" value="0" required></label><label>Categoría<select id="productCategory"><option>Snacks</option><option>Bebidas</option><option>Abarrotes</option><option>Lácteos</option><option>Limpieza</option><option>Otros</option></select></label></div>
+        <label>URL de imagen (opcional)<input id="productImage" type="url" placeholder="https://..."></label>
+        <div class="form-actions"><button class="btn primary" type="submit">Guardar producto</button><button class="btn soft" type="button" id="cancelProduct">Cancelar</button></div>
+      </form>
+      <div id="adminProductList" class="stack"></div>
+    </div>
+    <div id="adminOrders" class="admin-pane hidden"><h2>Pedidos</h2><div id="adminOrderList" class="stack"></div></div>
+    <div id="adminExpenses" class="admin-pane hidden">
+      <h2>Registrar gasto</h2>
+      <form id="expenseForm" class="panel form-grid">
+        <label>Descripción<input id="expenseDescription" required placeholder="Ej. Compra de mercadería"></label>
+        <div class="two-col"><label>Importe (S/)<input id="expenseAmount" type="number" min="0.01" step="0.01" required></label><label>Fecha<input id="expenseDate" type="date" required></label></div>
+        <button class="btn primary" type="submit">Guardar gasto</button>
+      </form>
+      <div id="expenseList" class="stack"></div>
+    </div>
+    <div id="adminSales" class="admin-pane hidden"><h2>Ventas confirmadas</h2><div id="adminSalesList" class="stack"></div></div>
+    <button class="btn soft full" id="backToStore">← Volver a la tienda</button>
+  </section>
+</main>
+
+<div class="cart-dock" id="cartDock">
+  <div><span id="dockUnits">0 unidades</span><strong id="dockTotal">S/ 0.00</strong></div>
+  <button class="btn orange" id="dockOpenCart">Ver carrito</button>
+</div>
+<div class="overlay hidden" id="overlay"></div>
+<aside class="cart-drawer hidden" id="cartDrawer" aria-label="Tu pedido">
+  <div class="drawer-head"><div><h2>Tu pedido</h2><p id="drawerCount">0 unidades</p></div><button class="icon-btn" id="closeCart" aria-label="Cerrar carrito">✕</button></div>
+  <div id="cartItems" class="cart-items"></div>
+  <div class="cart-total"><span>Total del pedido</span><strong id="cartTotal">S/ 0.00</strong></div>
+  <div class="checkout-fields"><label>Nombre (opcional)<input id="checkoutName" placeholder="Tu nombre"></label><label>Dirección (opcional)<input id="checkoutAddress" placeholder="Dirección o referencia"></label></div>
+  <button class="btn whatsapp full" id="sendWhatsApp">☏ Pedir por WhatsApp</button>
+  <p class="muted small">El pedido se enviará cuando pulses enviar dentro de WhatsApp. Todavía no es una venta confirmada.</p>
+  <button class="btn soft full" id="continueShopping">Seguir comprando</button>
+</aside>
+<div class="toast hidden" id="toast" role="status"></div>
+<footer><p>Mi Bodega · Prototipo de prueba</p><p class="muted small">Los precios y productos iniciales son ejemplos.</p></footer>
+<script src="app.js"></script>
+</body>
+</html>
